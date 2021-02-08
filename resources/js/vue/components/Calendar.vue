@@ -20,7 +20,7 @@
                     <div class="row mb-3">
                         <div class="col-sm-6">
                             <label class="mx-1">From</label>
-                            <datepicker @closed="handleDisable" :open-date="checkOpenDate()" input-class="form-control mx-auto" :typeable="true" placeholder="Select Date" v-model="startDate" :format="'yyyy-MM-dd'"></datepicker>
+                            <datepicker @closed="handleDisable(startDate)" :open-date="checkOpenDate()" input-class="form-control mx-auto" :typeable="true" placeholder="Select Date" v-model="startDate" :format="'yyyy-MM-dd'"></datepicker>
                         </div>
                         <div class="col-sm-6">
                             <label class="mx-1">To</label>
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="col-sm-12">
-                            <button class="btn btn-primary mt-4 px-4" @click="handleSave">Save</button>
+                            <button class="btn btn-primary mt-4 px-4" @click="handleSave" :disabled="checkFields()">Save</button>
                         </div>
                     </div>
                 </div>
@@ -96,6 +96,7 @@ export default {
                 this.eventMessage = this.$store.state.calendar.eventMessage;
                 this.checkedDays = this.$store.state.calendar.checkedDays;
                 this.eventId = this.$store.state.calendar.eventId;
+                this.handleDisable(this.$store.state.calendar.startDate);
                 return this.$store.state.calendar.checkedDays;
             }
         }
@@ -119,10 +120,10 @@ export default {
                 return new Date(this.startDate);
             }
         },
-        handleDisable() {
+        handleDisable(date) {
             this.disable = {
                 disabledDates: {
-                    to: new Date(setStartTime(this.startDate))
+                    to: new Date(setStartTime(date))
                 }
             }
         },
@@ -142,6 +143,12 @@ export default {
                     alert.showAlert = false;
                 }, 2500)
             }    
+        },
+        checkFields() {
+            if (this.eventMessage === '' || this.startDate === '' || this.endDate === '') {
+                return true;
+            }
+            return false;
         }
     },
 }
